@@ -74,7 +74,9 @@ int main(int argc, char *argv[])
 {
 	struct palabra *head=NULL;
 	
-
+	agregarPalabraAlFinal(&head, "hola");
+	agregarPalabraAlFinal(&head, "hello");
+	agregarPalabraAlFinal(&head, "bye");
 
 	if (argc >= 2) {
 		guardarEnArchivo(head,argv[1]);
@@ -84,9 +86,7 @@ int main(int argc, char *argv[])
 	}
 
 
-	agregarPalabraAlFinal(&head, "hola");
-	agregarPalabraAlFinal(&head, "hello");
-	agregarPalabraAlFinal(&head, "bye");
+
 	//mostrarPorPantalla(head);
 	
 	system("pause");
