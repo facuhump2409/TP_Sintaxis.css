@@ -31,7 +31,7 @@ struct idReconocido* nuevoId(char *lex, int condicion) {
 	switch (condicion) {
 	case ID_FUNC: nuevo->esIDdeFuncion = 1; nuevo->esIDdeVariable = 0; nuevo->estaMalDeclarado = 0; break;
 	case ID_VAR: nuevo->esIDdeFuncion = 0; nuevo->esIDdeVariable = 1; nuevo->estaMalDeclarado = 0; break;
-	case MAL: nuevo->esIDdeFuncion = 0; nuevo->esIDdeVariable = 0; nuevo->estaMalDeclarado = 1; break;
+	case ID_MAL: nuevo->esIDdeFuncion = 0; nuevo->esIDdeVariable = 0; nuevo->estaMalDeclarado = 1; break;
 	}
 	return nuevo;
 }
