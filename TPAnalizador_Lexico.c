@@ -105,9 +105,9 @@ int esOperador(char *lexema) {
 	return 0;
 }
 
-#define CANT_TIPOS_IDENTIFICADORES 10
+#define CANT_TIPOS_IDENTIFICADORES 8
 const char *tipos_de_identificadores[CANT_TIPOS_IDENTIFICADORES] = {
-	"double", "int", "struct",
+	"double", "int", "struct", "void",
 	"char", "long", "float", "short"
 };
 int esTipoIdentificador(char *lexema) {
