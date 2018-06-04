@@ -1,71 +1,69 @@
-void separarLexemas (struct palabra **head,char *nombreArchivo)
+void separarLexemas(struct palabra **head, char *nombreArchivo)
 {
 
-    int i= 0;
-    int j = 0;
-    char caracter[2]="\0";
-    char unCaracter[3]="\0";
-    char buffer [LEXEMA_SIZE]="\0";
-    FILE *archivo = fopen (nombreArchivo,"r");
-    if (archivo == NULL)
-    {
-        printf ("No se pudo abrir el archivo\n");
-        return 0;
-    }
-    printf ("lo abrio\n");
-    unCaracter[0] = getc (archivo); //leo el primer caracter y despues me fijo que es
-    do
-    {
-        if (isalpha(unCaracter[0]) || isdigit(unCaracter[0])|| unCaracter[0] == '_' || unCaracter[0]== '.')
-    {
-       do
-       {
-            buffer [i] = unCaracter[0];
-            i++;
-            unCaracter[0] = getc (archivo);
-       }
-       while (isalpha(unCaracter[0]) || isdigit(unCaracter[0])|| unCaracter[0] == '_' || unCaracter[0]== '.');
-       i=0;
-       agregarPalabraAlFinal(&(*head),buffer);
-    }
-    //strcpy (buffer, caracter);
-    if (isspace(unCaracter[0])==0)
-    {
-        if (unCaracter [0] == '%'|| unCaracter[0]== '\\' || unCaracter [0] == '/')
-        {
-            unCaracter [1] = getc(archivo);
-            agregarPalabraAlFinal(&(*head),unCaracter);
-             if (strcmp(unCaracter,"//")==0)
-            {
-             	caracter[0] =getc (archivo);
-                while(caracter[0]!='\n')
-             	{
-             	    for (j =0; j<10;j++) {buffer [j] = '\0';}
-        while (isalpha(caracter[0]) || isdigit(caracter[0])|| caracter[0] == '_' || caracter[0]== '.' || isspace (caracter[0])==0)
-       {
-            buffer [i] = caracter[0];
-            i++;
-            caracter[0] = getc (archivo);
-       }
-       if (i==0) {caracter [0]=getc(archivo);}
-       i=0;
-       agregarPalabraAlFinal(&(*head),buffer);
-       if (caracter[0]=='\n') {agregarPalabraAlFinal(&(*head),caracter);}
+	int i = 0;
+	int j = 0;
+	char caracter[2] = "\0";
+	char unCaracter[3] = "\0";
+	char buffer[LEXEMA_SIZE] = "\0";
+	FILE *archivo = fopen(nombreArchivo, "r");
+	if (archivo == NULL)
+	{
+		printf("No se pudo abrir el archivo\n");
+		return 0;
+	}
+	printf("lo abrio\n");
+	unCaracter[0] = getc(archivo); //leo el primer caracter y despues me fijo que es
+	do
+	{
+		if (isalpha(unCaracter[0]) || isdigit(unCaracter[0]) || unCaracter[0] == '_' || unCaracter[0] == '.')
+		{
+			do
+			{
+				buffer[i] = unCaracter[0];
+				i++;
+				unCaracter[0] = getc(archivo);
+			} while (isalpha(unCaracter[0]) || isdigit(unCaracter[0]) || unCaracter[0] == '_' || unCaracter[0] == '.');
+			i = 0;
+			agregarPalabraAlFinal(&(*head), buffer);
+		}
+		//strcpy (buffer, caracter);
+		if (isspace(unCaracter[0]) == 0)
+		{
+			if (unCaracter[0] == '%' || unCaracter[0] == '\\' || unCaracter[0] == '/')
+			{
+				unCaracter[1] = getc(archivo);
+				agregarPalabraAlFinal(&(*head), unCaracter);
+				if (strcmp(unCaracter, "//") == 0)
+				{
+					caracter[0] = getc(archivo);
+					while (caracter[0] != '\n')
+					{
+						for (j = 0; j<10; j++) { buffer[j] = '\0'; }
+						while (isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0)
+						{
+							buffer[i] = caracter[0];
+							i++;
+							caracter[0] = getc(archivo);
+						}
+						if (i == 0) { caracter[0] = getc(archivo); }
+						i = 0;
+						if (isspace(buffer[0])==0) agregarPalabraAlFinal(&(*head), buffer);
+						if (caracter[0] == '\n') { agregarPalabraAlFinal(&(*head), caracter); }
 
-             	}
-             	//agregarPalabraAlFinal(&(*head),caracter);
-            }
-            unCaracter [1] = '\0';
-        }
-        else {agregarPalabraAlFinal(&(*head),unCaracter);}
-        //unCaracter [1] = '\0';
-    }
-     for (j =0; j<10;j++)
-    {
-        buffer [j] = '\0';
-    }
-    unCaracter[0] = getc(archivo);
-    }
-    while (unCaracter[0] != EOF);
-    fclose(archivo);
+					}
+					//agregarPalabraAlFinal(&(*head),caracter);
+				}
+				unCaracter[1] = '\0';
+			}
+			else { agregarPalabraAlFinal(&(*head), unCaracter); }
+			//unCaracter [1] = '\0';
+		}
+		for (j = 0; j<10; j++)
+		{
+			buffer[j] = '\0';
+		}
+		unCaracter[0] = getc(archivo);
+	} while (unCaracter[0] != EOF);
+	fclose(archivo);
 }
