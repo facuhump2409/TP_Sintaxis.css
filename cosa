@@ -49,9 +49,12 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 						if (i == 0) {caracter[0] = getc(archivo);}
 						i = 0;
 						if (isspace(buffer[0])==0) agregarPalabraAlFinal(&(*head), buffer,linea);
-						if (caracter[0] == '\n') { agregarPalabraAlFinal(&(*head), caracter,linea); }
+						//if (caracter[0] == '\n') { agregarPalabraAlFinal(&(*head), caracter,linea); }
 
 					}
+					if (caracter[0] == '\n') {
+                    agregarPalabraAlFinal(&(*head), caracter,linea);
+					linea++; }
 					//agregarPalabraAlFinal(&(*head),caracter);
 				}
 				unCaracter[1] = '\0';
