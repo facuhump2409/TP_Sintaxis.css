@@ -3,6 +3,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 
 	int i = 0;
 	int j = 0;
+	int linea = 1;
 	char caracter[2] = "\0";
 	char unCaracter[3] = "\0";
 	char buffer[LEXEMA_SIZE] = "\0";
@@ -12,7 +13,6 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 		printf("No se pudo abrir el archivo\n");
 		return 0;
 	}
-	printf("lo abrio\n");
 	unCaracter[0] = getc(archivo); //leo el primer caracter y despues me fijo que es
 	do
 	{
@@ -25,7 +25,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 				unCaracter[0] = getc(archivo);
 			} while (isalpha(unCaracter[0]) || isdigit(unCaracter[0]) || unCaracter[0] == '_' || unCaracter[0] == '.');
 			i = 0;
-			agregarPalabraAlFinal(&(*head), buffer);
+			agregarPalabraAlFinal(&(*head), buffer,linea);
 		}
 		//strcpy (buffer, caracter);
 		if (isspace(unCaracter[0]) == 0)
@@ -33,7 +33,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 			if (unCaracter[0] == '%' || unCaracter[0] == '\\' || unCaracter[0] == '/')
 			{
 				unCaracter[1] = getc(archivo);
-				agregarPalabraAlFinal(&(*head), unCaracter);
+				agregarPalabraAlFinal(&(*head), unCaracter,linea);
 				if (strcmp(unCaracter, "//") == 0)
 				{
 					caracter[0] = getc(archivo);
@@ -46,18 +46,19 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 							i++;
 							caracter[0] = getc(archivo);
 						}
-						if (i == 0) { caracter[0] = getc(archivo); }
+						if (i == 0) {caracter[0] = getc(archivo);}
 						i = 0;
-						if (isspace(buffer[0])==0) agregarPalabraAlFinal(&(*head), buffer);
-						if (caracter[0] == '\n') { agregarPalabraAlFinal(&(*head), caracter); }
+						if (isspace(buffer[0])==0) agregarPalabraAlFinal(&(*head), buffer,linea);
+						if (caracter[0] == '\n') { agregarPalabraAlFinal(&(*head), caracter,linea); }
 
 					}
 					//agregarPalabraAlFinal(&(*head),caracter);
 				}
 				unCaracter[1] = '\0';
 			}
-			else { agregarPalabraAlFinal(&(*head), unCaracter); }
+			else { agregarPalabraAlFinal(&(*head), unCaracter,linea); }
 			//unCaracter [1] = '\0';
+        if(unCaracter[0]='\n') {linea++;}
 		}
 		for (j = 0; j<10; j++)
 		{
