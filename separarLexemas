@@ -37,10 +37,10 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 				if (strcmp(unCaracter, "//") == 0)
 				{
 					caracter[0] = getc(archivo);
-					while (caracter[0] != '\n')
+					while (caracter[0] != '\n' && caracter[0] != EOF)
 					{
 						for (j = 0; j<10; j++) { buffer[j] = '\0'; }
-						while (isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0)
+						while ( (isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0 ) && caracter[0] != EOF)
 						{
 							buffer[i] = caracter[0];
 							i++;
@@ -61,10 +61,10 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 				else if (strcmp(unCaracter, "/*") == 0)
 				{
 					caracter[0] = getc(archivo);
-					while (caracter[0] != '*' && caracter[0]!=EOF)
+					while (caracter[0] != '*' && caracter[0] != EOF)
 					{
-						for (j = 0; j<10; j++) { buffer[j] = '\0'; }
-						while ((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0) && caracter[0]!=EOF && caracter[0]!='*')
+						for (j = 0; j<LEXEMA_SIZE; j++) { buffer[j] = '\0'; }
+						while ((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0) && caracter[0] != EOF && caracter[0] != '*')
 						{
 							buffer[i] = caracter[0];
 							i++;
@@ -77,7 +77,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 
 					}
 					caracter[1] = getc(archivo);
-					if (strcmp(caracter, "*/")==0) {
+					if (strcmp(caracter, "*/") == 0) {
 						agregarPalabraAlFinal(&(*head), caracter, linea);
 						linea++;
 					}
