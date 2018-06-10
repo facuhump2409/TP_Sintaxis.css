@@ -39,7 +39,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 					caracter[0] = getc(archivo);
 					while (caracter[0] != '\n' && caracter[0]!=EOF)
 					{
-						for (j = 0; j<10; j++) { buffer[j] = '\0'; }
+						for (j = 0; j<LEXEMA_SIZE; j++) { buffer[j] = '\0'; }
 						if((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0)&& caracter[0]!=EOF){
 						do
 						{
@@ -67,7 +67,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 					caracter[0] = getc(archivo);
 					while (caracter[0] != '*' && caracter[0]!=EOF)
 					{
-						for (j = 0; j<10; j++) { buffer[j] = '\0'; }
+						for (j = 0; j<LEXEMA_SIZE; j++) { buffer[j] = '\0'; }
 						if (((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0) && caracter[0]!=EOF && caracter[0]!='*')){
 						do
 						{
@@ -98,7 +98,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 			unCaracter [1] = '\0';
 		}
 		if (unCaracter[0] == '\n') { linea++; }
-		for (j = 0; j<10; j++)buffer[j] = '\0';
+		for (j = 0; j<LEXEMA_SIZE; j++)buffer[j] = '\0';
 
 		unCaracter[0] = getc(archivo);
 	} while (unCaracter[0] != EOF);
