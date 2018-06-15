@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#pragma warning(disable:4996)
-
 #define LEXEMA_SIZE 30
 
 struct palabra {
@@ -72,20 +70,20 @@ void agregarIdentificadorAlFinal(struct idReconocido **head, char *lex, int cond
 #define PALABRA_RESERVADA 0
 #define IDENTIFICADOR_FUNCION 1
 #define IDENTIFICADOR 2
-#define OPERADOR 3 
+#define OPERADOR 3
 #define CAR_PUNTUACION 4
 #define NUMEROS 5
 #define CADENA_DE_CARACTERES 6
 #define NO_IDENTIFICABLE 7
 
-const char *tokenType[8] = { 
-	"PALABRA RESERVADA", 
-	"IDENTIFICADOR DE FUNCION", 
+const char *tokenType[8] = {
+	"PALABRA RESERVADA",
+	"IDENTIFICADOR DE FUNCION",
 	"IDENTIFICADOR",
-	"OPERADOR", 
-	"CARACTER DE PUNTUACION", 
-	"CONSTANTE NUMERICA", 
-	"CADENA DE CARACTERES", 
+	"OPERADOR",
+	"CARACTER DE PUNTUACION",
+	"CONSTANTE NUMERICA",
+	"CADENA DE CARACTERES",
 	"NO IDENTIFICADO"
 };
 
@@ -101,7 +99,8 @@ const char *palabras_reservadas[CANT_RESERVADAS] = {
 	"typedef" //aunque no lo implementamos
 };
 int esReservada(char *lexema) {
-	for (int i = 0; i < CANT_RESERVADAS; i++) if (strcmp(lexema, palabras_reservadas[i]) == 0) return 1;
+	int i;
+	for (i = 0; i < CANT_RESERVADAS; i++) if (strcmp(lexema, palabras_reservadas[i]) == 0) return 1;
 	return 0;
 }
 
@@ -109,11 +108,12 @@ int esReservada(char *lexema) {
 const char *palabras_reservadas_preprocesador[CANT_RESERVADAS_PREPROC] = { //revisar despues de un #
 	"include", "elif", "endif",
 	"pragma", "defined", "ifdef", "ifndef",
-	"undef", "line", "error", 
+	"undef", "line", "error",
 	"define" //aunque no lo implementamos
 };
 int esReservadaPreproc(char *lexema) {
-	for (int i = 0; i < CANT_RESERVADAS_PREPROC; i++) if (strcmp(lexema, palabras_reservadas_preprocesador[i]) == 0) return 1;
+	int i;
+	for (i = 0; i < CANT_RESERVADAS_PREPROC; i++) if (strcmp(lexema, palabras_reservadas_preprocesador[i]) == 0) return 1;
 	return 0;
 }
 
@@ -123,7 +123,8 @@ const char *operadores[CANT_OPERADORES] = { //no usamos la | sola
 	"*","!","&","%","^","&&","||"
 };//tambien /*,*/,//
 int esOperador(char *lexema) {
-	for (int i = 0; i < CANT_OPERADORES; i++) if (strcmp(lexema, operadores[i]) == 0) return 1;
+	int i;
+	for (i = 0; i < CANT_OPERADORES; i++) if (strcmp(lexema, operadores[i]) == 0) return 1;
 	return 0;
 }
 
@@ -133,7 +134,8 @@ const char *tipos_de_identificadores[CANT_TIPOS_DE_IDENTIFICADORES] = {
 	"char", "long", "float", "short"
 };
 int esTipoDeIdentificador(char *lexema) {
-	for (int i = 0; i < CANT_TIPOS_DE_IDENTIFICADORES; i++)  if (strcmp(lexema, tipos_de_identificadores[i]) == 0) return 1;
+	int i;
+	for (i = 0; i < CANT_TIPOS_DE_IDENTIFICADORES; i++)  if (strcmp(lexema, tipos_de_identificadores[i]) == 0) return 1;
 	return 0;
 }
 
@@ -154,7 +156,7 @@ int dentro_de_comentario_simple = 0;
 int dentro_de_comentario_multiple = 0;
 int tipo = -1;
 
-void analizarPalabra(struct palabra *elemento, struct idReconocido **headIdentificadores) { 
+void analizarPalabra(struct palabra *elemento, struct idReconocido **headIdentificadores) {
 
 	//CADENAS DE CHARS (dentro del "string")
 	if (dentro_de_cadena && elemento->lexema[0] != '"') { elemento->token = tokenType[CADENA_DE_CARACTERES]; }
@@ -163,7 +165,7 @@ void analizarPalabra(struct palabra *elemento, struct idReconocido **headIdentif
 	else if (dentro_de_comentario_multiple) {
 		if (strcmp(elemento->lexema, "*/") != 0) elemento->token = tokenType[CADENA_DE_CARACTERES];
 		else { elemento->token = tokenType[CAR_PUNTUACION]; dentro_de_comentario_multiple = 0; } }
-	
+
 	//CADENAS DE CHARS (dentro o final del comentario simple)
 	else if (dentro_de_comentario_simple){
 		if (elemento->lexema[0] != '\n') elemento->token = tokenType[CADENA_DE_CARACTERES];
@@ -171,7 +173,7 @@ void analizarPalabra(struct palabra *elemento, struct idReconocido **headIdentif
 
 	//CARACTERES DE PUNTUACION (inicio de comentario multiple)
 	else if (strcmp(elemento->lexema,"/*") == 0) { elemento->token = tokenType[CAR_PUNTUACION]; dentro_de_comentario_multiple = 1; }
-	
+
 	//CADENAS DE CHARS (para librerias)
 	else if (elemento->ant && elemento->ant->lexema[0] == '<' && elemento->ant->ant && strcmp(elemento->ant->ant->lexema, "include") == 0 && elemento->sig && elemento->sig->lexema[0] == '>') { elemento->token = tokenType[CADENA_DE_CARACTERES]; }
 
@@ -215,14 +217,14 @@ void analizarPalabra(struct palabra *elemento, struct idReconocido **headIdentif
 	else if ( elemento->ant && elemento->sig && elemento->sig->lexema[0] == '(' && ( esTipoDeIdentificador(elemento->ant->lexema) || (elemento->ant->ant && esTipoDeIdentificador(elemento->ant->ant->lexema) && elemento->ant->lexema[0] == '*') ) ) {
 		if (isalpha(elemento->lexema[0]) || elemento->lexema[0] == '_') { elemento->token = tokenType[IDENTIFICADOR_FUNCION]; agregarIdentificadorAlFinal(&(*headIdentificadores), elemento->lexema, ID_FUNC); }
 		else { elemento->token = tokenType[NO_IDENTIFICABLE]; agregarIdentificadorAlFinal(&(*headIdentificadores), elemento->lexema, ID_MAL); } }
-	
+
 
 	//IDENTIFICADORES (de variables)
 	else if ( elemento->ant && ( esTipoDeIdentificador(elemento->ant->lexema) || (elemento->ant->ant && esTipoDeIdentificador(elemento->ant->ant->lexema) && elemento->ant->lexema[0] == '*') ) ) {
 		if (isalpha(elemento->lexema[0]) || elemento->lexema[0] == '_') { elemento->token = tokenType[IDENTIFICADOR]; agregarIdentificadorAlFinal(&(*headIdentificadores), elemento->lexema, ID_VAR); }
 		else { elemento->token = tokenType[NO_IDENTIFICABLE]; agregarIdentificadorAlFinal(&(*headIdentificadores), elemento->lexema, ID_MAL); } }
-	
-	
+
+
 	else { elemento->token = tokenType[NO_IDENTIFICABLE]; }
 }
 
@@ -368,7 +370,7 @@ void guardarEnArchivo(struct palabra *head, char *nombreArchivo) {
 	if (archivo = fopen(nombreArchivo, "w")) {
 		fprintf(archivo, "LINEA,LEXEMA,TOKEN\n");
 		while (head) {
-			if (head->lexema[0] != '\n' && head->token != NULL) fprintf(archivo, "%d,%s,%s\n", head->nroLinea, head->lexema, head->token); 
+			if (head->lexema[0] != '\n' && head->token != NULL) fprintf(archivo, "%d,%s,%s\n", head->nroLinea, head->lexema, head->token);
 			//pongo la condicion para el tema del \n de los comentarios, reviso el token por las dudas que haya otro error en otra cosa
 
 			head = head->sig;
@@ -424,7 +426,7 @@ void borrarIdentificados(struct idReconocido **headIdentificadores) {
 	*headIdentificadores = NULL;
 }
 
-int main(int argc, char *argv[]) { 
+int main(int argc, char *argv[]) {
 
 	struct palabra *head=NULL;
 	struct idReconocido *headIdentificadores=NULL;
@@ -441,7 +443,7 @@ int main(int argc, char *argv[]) {
 		mostrarPorPantalla(head);
 	}
 	else printf("Incorrectos parametros para la ejecucion del programa\n usar: (exe dir) o (exe dir dir)\n");
-	
+
 	borrarPalabras(&head);
 	borrarIdentificados(&headIdentificadores);
     return 0;
