@@ -40,14 +40,16 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 				buffer[0] = unCaracter[0];
 				buffer[1] = casoEspecial;
 				agregarPalabraAlFinal(&(*head), buffer, linea);
-				unCaracter[0] = getc(archivo); // si entra aca despues se tiene que avanzar un caracter
+				unCaracter[0] = getc(archivo);
+				if(isspace(unCaracter[0])) {unCaracter[0] =getc(archivo);} // si entra aca despues se tiene que avanzar un caracter
 				for (j = 0; j<LEXEMA_SIZE; j++) { buffer[j] = '\0'; } //limpias el buffer
 			}
-			else if (isdigit(casoEspecial))//((casoEspecial != '/' || casoEspecial != '*')&& unCaracter[0] == '/')
+			else if (isdigit(casoEspecial)|| isspace(casoEspecial))//((casoEspecial != '/' || casoEspecial != '*')&& unCaracter[0] == '/')
 			{
 				agregarPalabraAlFinal(&(*head), unCaracter, linea); //agrego el dividido solo
 				ungetc(casoEspecial,archivo); // devolves igual lo que venga despues del dividido para que se trabaje
 				unCaracter[0] = getc(archivo); // avanzas
+				if(isspace(unCaracter[0])) {unCaracter[0] =getc(archivo);}
 			}
 			else {ungetc(casoEspecial,archivo);} // en otro caso devolves el caracter al stream.
 		}
@@ -115,7 +117,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 				caracterEspecial[1] = '\0';
 				unCaracter[1] = '\0';
 			}
-			else { agregarPalabraAlFinal(&(*head), unCaracter, linea); }
+			else {agregarPalabraAlFinal(&(*head), unCaracter, linea);}
 			unCaracter [1] = '\0';
 		}
 		if (unCaracter[0] == '\n') { linea++; }
