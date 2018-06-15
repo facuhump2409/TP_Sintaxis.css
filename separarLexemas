@@ -2,9 +2,10 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 {
 
 	int i = 0;
+	char casoEspecial;
 	int j = 0;
 	int linea = 1;
-	char caracter[3] = "\0";
+	char caracterEspecial[3] = "\0";
 	char unCaracter[3] = "\0";
 	char buffer[LEXEMA_SIZE] = "\0";
 	FILE *archivo = fopen(nombreArchivo, "r");
@@ -16,6 +17,7 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 	unCaracter[0] = getc(archivo); //leo el primer caracter y despues me fijo que es
 	do
 	{
+
 		if (isalpha(unCaracter[0]) || isdigit(unCaracter[0]) || unCaracter[0] == '_' || unCaracter[0] == '.')
 		{
 			do
@@ -30,68 +32,87 @@ void separarLexemas(struct palabra **head, char *nombreArchivo)
 		//strcpy (buffer, caracter);
 		if (isspace(unCaracter[0]) == 0)
 		{
-			if (unCaracter[0] == '%' || unCaracter[0] == '\\' || unCaracter[0] == '/')
+			if(unCaracter[0]== '&' || unCaracter[0] == '/')
+		{
+			casoEspecial = getc(archivo);
+			if(casoEspecial == '&' && unCaracter[0] == '&')
+			{
+				buffer[0] = unCaracter[0];
+				buffer[1] = casoEspecial;
+				agregarPalabraAlFinal(&(*head), buffer, linea);
+				unCaracter[0] = getc(archivo); // si entra aca despues se tiene que avanzar un caracter
+				for (j = 0; j<LEXEMA_SIZE; j++) { buffer[j] = '\0'; } //limpias el buffer
+			}
+			else if (isdigit(casoEspecial))//((casoEspecial != '/' || casoEspecial != '*')&& unCaracter[0] == '/')
+			{
+				agregarPalabraAlFinal(&(*head), unCaracter, linea); //agrego el dividido solo
+				ungetc(casoEspecial,archivo); // devolves igual lo que venga despues del dividido para que se trabaje
+				unCaracter[0] = getc(archivo); // avanzas
+			}
+			else {ungetc(casoEspecial,archivo);} // en otro caso devolves el caracter al stream.
+		}
+			if (unCaracter[0] == '%' || unCaracter[0] == '\\' || unCaracter[0] == '/' || unCaracter[0]=='|')
 			{
 				unCaracter[1] = getc(archivo);
 				agregarPalabraAlFinal(&(*head), unCaracter, linea);
 				if (strcmp(unCaracter, "//") == 0)
 				{
-					caracter[0] = getc(archivo);
-					while (caracter[0] != '\n' && caracter[0]!=EOF)
+					caracterEspecial[0] = getc(archivo);
+					while (caracterEspecial[0] != '\n' && caracterEspecial[0]!=EOF)
 					{
 						for (j = 0; j<LEXEMA_SIZE; j++) { buffer[j] = '\0'; }
-						if((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0)&& caracter[0]!=EOF){
+						if((isalpha(caracterEspecial[0]) || isdigit(caracterEspecial[0]) || caracterEspecial[0] == '_' || caracterEspecial[0] == '.' || isspace(caracterEspecial[0]) == 0)&& caracterEspecial[0]!=EOF){
 						do
 						{
-							buffer[i] = caracter[0];
+							buffer[i] = caracterEspecial[0];
 							i++;
-							caracter[0] = getc(archivo);
-						}while ((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0)&& caracter[0]!=EOF);
+							caracterEspecial[0] = getc(archivo);
+						}while ((isalpha(caracterEspecial[0]) || isdigit(caracterEspecial[0]) || caracterEspecial[0] == '_' || caracterEspecial[0] == '.' || isspace(caracterEspecial[0]) == 0)&& caracterEspecial[0]!=EOF);
 						}
 						if(strcmp(buffer,"")) {agregarPalabraAlFinal(&(*head), buffer, linea);}
-						//if (caracter[0] == '\n') { linea++; }
-						if (i == 0) { caracter[0] = getc(archivo); }
+						//if (caracterEspecial[0] == '\n') { linea++; }
+						if (i == 0) { caracterEspecial[0] = getc(archivo); }
 						i = 0;
 						//if (isspace(buffer[0]) == 0) agregarPalabraAlFinal(&(*head), buffer, linea);
-						//if (caracter[0] == '\n') { agregarPalabraAlFinal(&(*head), caracter,linea); }
+						//if (caracterEspecial[0] == '\n') { agregarPalabraAlFinal(&(*head), caracterEspecial,linea); }
 
 					}
-					if (caracter[0] == '\n') {
-						agregarPalabraAlFinal(&(*head), caracter, linea);
+					if (caracterEspecial[0] == '\n') {
+						agregarPalabraAlFinal(&(*head), caracterEspecial, linea);
 						linea++;
 					}
-					//agregarPalabraAlFinal(&(*head),caracter);
+					//agregarPalabraAlFinal(&(*head),caracterEspecial);
 				}
 				else if (strcmp(unCaracter, "/*") == 0)
 				{
-					caracter[0] = getc(archivo);
-					while (caracter[0] != '*' && caracter[0]!=EOF)
+					caracterEspecial[0] = getc(archivo);
+					while (caracterEspecial[0] != '*' && caracterEspecial[0]!=EOF)
 					{
 						for (j = 0; j<LEXEMA_SIZE; j++) { buffer[j] = '\0'; }
-						if (((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0) && caracter[0]!=EOF && caracter[0]!='*')){
+						if (((isalpha(caracterEspecial[0]) || isdigit(caracterEspecial[0]) || caracterEspecial[0] == '_' || caracterEspecial[0] == '.' || isspace(caracterEspecial[0]) == 0) && caracterEspecial[0]!=EOF && caracterEspecial[0]!='*')){
 						do
 						{
-							buffer[i] = caracter[0];
+							buffer[i] = caracterEspecial[0];
 							i++;
-							caracter[0] = getc(archivo);
-						} while ((isalpha(caracter[0]) || isdigit(caracter[0]) || caracter[0] == '_' || caracter[0] == '.' || isspace(caracter[0]) == 0) && caracter[0]!=EOF && caracter[0]!='*');
+							caracterEspecial[0] = getc(archivo);
+						} while ((isalpha(caracterEspecial[0]) || isdigit(caracterEspecial[0]) || caracterEspecial[0] == '_' || caracterEspecial[0] == '.' || isspace(caracterEspecial[0]) == 0) && caracterEspecial[0]!=EOF && caracterEspecial[0]!='*');
 						}
 						if(strcmp(buffer,"")) {agregarPalabraAlFinal(&(*head), buffer, linea);}
-						if (caracter[0] == '\n') { linea++; }
-						if (i == 0 || isspace(caracter[0])) { caracter[0] = getc(archivo); }
+						if (caracterEspecial[0] == '\n') { linea++; }
+						if (i == 0 || isspace(caracterEspecial[0])) { caracterEspecial[0] = getc(archivo); }
 						i = 0;
 						//if (buffer[0] != "") agregarPalabraAlFinal(&(*head), buffer, linea);
-						//if (caracter[0] == '\n') { agregarPalabraAlFinal(&(*head), caracter,linea); }
+						//if (caracterEspecial[0] == '\n') { agregarPalabraAlFinal(&(*head), caracterEspecial,linea); }
 
 					}
-					caracter[1] = getc(archivo);
-					if (strcmp(caracter, "*/")==0) {
+					caracterEspecial[1] = getc(archivo);
+					if (strcmp(caracterEspecial, "*/")==0) {
 
-						agregarPalabraAlFinal(&(*head), caracter, linea);
+						agregarPalabraAlFinal(&(*head), caracterEspecial, linea);
 						//linea++;
 					}
 				}
-				caracter[1] = '\0';
+				caracterEspecial[1] = '\0';
 				unCaracter[1] = '\0';
 			}
 			else { agregarPalabraAlFinal(&(*head), unCaracter, linea); }
